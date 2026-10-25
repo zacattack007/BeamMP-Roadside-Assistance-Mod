@@ -1,0 +1,47 @@
+<section class="ra-app" aria-label="Roadside assistance">
+  <link rel="stylesheet" href="/ui/modules/apps/RoadsideAssistance/app.css">
+  <header class="ra-header">
+    <div class="ra-brand-icon" aria-hidden="true">↗</div>
+    <div><div class="ra-eyebrow">BEAMMP / RECOVERY NETWORK</div><h1>Roadside assistance</h1></div>
+    <button class="ra-refresh" ng-click="act('refresh')" ng-disabled="busy" title="Refresh job board" aria-label="Refresh job board">↻</button>
+  </header>
+  <div class="ra-status"><span class="ra-dot" ng-class="{'ra-live': state.connected}"></span>{{connection}}<span class="ra-count">{{state.openJobs.length}} open</span></div>
+  <div class="ra-scroll">
+    <div class="ra-notice" ng-if="notice" role="status" aria-live="polite">{{notice}}</div>
+    <div class="ra-offline" ng-if="!state.connected">Join a server running Roadside Assistance. If this stays offline, update both the server script and client ZIP, then reconnect.</div>
+
+    <section class="ra-card ra-request" ng-if="!state.request && !state.assignment">
+      <div class="ra-eyebrow">NEED A HAND?</div>
+      <h2>Get back on the road.</h2>
+      <p>Call a player with a tow truck to your current vehicle.</p>
+      <button class="ra-button ra-primary" ng-click="act('request')" ng-disabled="!canRequest()">{{state.selecting ? 'Selecting your vehicle…' : (state.cooldown > 0 ? 'Request again in ' + state.cooldown + 's' : 'Request roadside help')}}</button>
+      <button class="ra-button ra-subtle" ng-if="state.selecting" ng-click="act('cancel')" ng-disabled="busy || !state.connected">Cancel selection</button>
+    </section>
+
+    <section class="ra-card ra-active" ng-if="state.request">
+      <div class="ra-card-top"><span class="ra-eyebrow">YOUR REQUEST</span><span class="ra-job-id">#{{state.request.id}}</span></div>
+      <h2>{{state.request.helperName ? 'Help is on the way.' : 'Finding you a helper.'}}</h2>
+      <p ng-if="state.request.helperName"><strong>{{state.request.helperName}}</strong> accepted your recovery.</p>
+      <p ng-if="!state.request.helperName">Your request is on the job board for other players.</p>
+      <div class="ra-meta">Vehicle {{state.request.vehicle}} · Player {{state.request.owner}}</div>
+      <button class="ra-button ra-outline" ng-click="act('cancel')" ng-disabled="busy || !state.connected">Cancel my request</button>
+    </section>
+
+    <section class="ra-card ra-active" ng-if="state.assignment">
+      <div class="ra-card-top"><span class="ra-eyebrow">YOUR RECOVERY JOB</span><span class="ra-job-id">#{{state.assignment.id}}</span></div>
+      <h2>{{state.assignment.name}}</h2>
+      <div class="ra-meta">Vehicle {{state.assignment.vehicle}} · Player {{state.assignment.owner}}</div>
+      <p>Follow the orange marker and recover the vehicle with your truck.</p>
+      <div class="ra-actions"><button class="ra-button ra-outline" ng-click="act('locate')" ng-disabled="busy || !state.connected">Locate vehicle</button><button class="ra-button ra-primary" ng-click="act('complete')" ng-disabled="busy || !state.connected">Complete job</button></div>
+      <button class="ra-button ra-subtle" ng-click="act('release')" ng-disabled="busy || !state.connected">Release job to other helpers</button>
+    </section>
+
+    <div class="ra-section-heading"><h2>Open requests</h2><span>PLAYER-OPERATED</span></div>
+    <div class="ra-empty" ng-if="!state.openJobs.length"><div class="ra-empty-symbol" aria-hidden="true">✓</div><strong>All clear for now</strong><p>New recovery requests appear here.</p></div>
+    <article class="ra-job" ng-repeat="job in state.openJobs track by job.id">
+      <div class="ra-job-info"><div class="ra-job-title"><strong>{{job.name}}</strong><span>#{{job.id}}</span></div><div class="ra-meta">Vehicle {{job.vehicle}} · Player {{job.owner}}</div></div>
+      <button class="ra-button ra-small" ng-click="act('accept', job.id)" ng-disabled="!canTakeJob() || job.owner === state.playerId">{{job.owner === state.playerId ? 'Yours' : 'Accept job'}}</button>
+    </article>
+  </div>
+  <footer class="ra-footer">Your truck. Your recovery. <span>/assist help</span></footer>
+</section>

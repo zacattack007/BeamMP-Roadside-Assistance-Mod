@@ -1,0 +1,19 @@
+{
+  "name": "Roadside Assistance",
+  "author": "Roadside Assistance Mod",
+  "version": "0.2",
+  "description": "Request a recovery, accept towing jobs, and find stranded vehicles in BeamMP.",
+  "directive": "roadsideAssistance",
+  "domElement": "<roadside-assistance></roadside-assistance>",
+  "types": ["ui.apps.categories.utility"],
+  "category": "Gameplay",
+  "interactive": "required",
+  "css": {
+    "width": "380px",
+    "height": "540px",
+    "min-width": "310px",
+    "min-height": "350px",
+    "top": "100px",
+    "right": "30px"
+  }
+}
